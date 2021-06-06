@@ -1,0 +1,57 @@
+# 端口号
+server:
+  port: 80
+
+spring:
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 20MB
+  # Redis配置
+  redis:
+#    host: 172.16.43.10
+    host: localhost
+    port: 6379
+#    password: zhongjing
+    jedis:
+      pool:
+        max-active: 8
+        max-wait: 1
+        max-idle: 500
+        min-idle: 0
+    lettuce:
+      shutdown-timeout: 100
+  # 邮件配置
+  mail:
+    # 服务主机
+    host: smtp.163.com
+    # 服务协议
+    protocol: smtp
+    # 编码集
+    default-encoding: utf-8
+    # 发送邮件的账户
+    username: zhangfan_fighter@163.com
+    # 授权码 注：授权码不可用，需要自行去邮箱开通，具体方法请百度。
+    password: BPGLIDXFEIXNEAXD
+    # 测试连接
+    test-connection: true
+    # 属性
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+            required: true
+
+
+mybatis:
+  # mapper.xml文件路径
+  mapper-locations: classpath:mapper/*.xml
+  # 开启实体类别名
+  type-aliases-package: info.zhongjing.plms.entity
+  # 配置
+  configuration:
+    # 下划线转驼峰
+    map-underscore-to-camel-case: true

@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>室内停车场管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+    <style type="text/css">
+        .page {
+            width: 50%;
+            margin-left: 450px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/commonElement :: head"></div>
+    <div th:replace="common/commonElement :: left-nav"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <form class="layui-form layui-row" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input id="plateNumber" type="text" name="password" required lay-verify="required"
+                               placeholder="请输入车牌号"
+                               autocomplete="off" class="layui-input" th:value="${plate_number}">
+                    </div>
+                    <label class="layui-form-label">手机号</label>
+                    <div class="layui-input-inline">
+                        <input id="phoneNum" type="text" name="password" required lay-verify="required"
+                               placeholder="请输入手机号"
+                               autocomplete="off" class="layui-input" th:value="${phone_num}">
+                    </div>
+                    <button id="selectVipButton" type="button" class="layui-btn  layui-col-md1">
+                        会员查询
+                    </button>
+                    <button id="addVipButton" type="button" class="layui-btn  layui-col-md1">
+                        添加会员
+                    </button>
+            </form>
+            <div class="layui-col-md12">
+                <br>
+                <label>会员列表</label>
+                <hr class="layui-bg-green">
+                <br>
+            </div>
+            <table class="layui-table" lay-size="lg">
+                <thead>
+                <tr>
+                    <th>会员ID</th>
+                    <th>会员名</th>
+                    <th>车牌号</th>
+                    <th>手机号</th>
+                    <th>办理时间</th>
+                    <th>到期时间</th>
+                    <th>已收费</th>
+                    <th>功能</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="vip : ${pageQueryUtils.list}">
+                    <td th:text="${vip.id}">#</td>
+                    <td th:text="${vip.username}">张三</td>
+                    <td th:text="${vip.plateNumber}">晋AV0001</td>
+                    <td th:text="${vip.phoneNum}">13938389438</td>
+                    <td th:text="${vip.startTime}">2021-3-9 10:24</td>
+                    <td th:text="${vip.endTime}">2021-3-9 10:24</td>
+                    <td th:text="${vip.charge}"></td>
+                    <td>
+                        <button type="button" class="layui-btn layui-col-md12"
+                                th:onclick="'javascript:renewVip('+${vip.id}+')'">续费
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="page">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/vip/main(pageNum=${pageQueryUtils.prePageNum}, plate_number=${plate_number}, phone_num=${phone_num})}">&#xe65a;上一页</a>
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        第[[${pageQueryUtils.pageNum}]]页
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/vip/main(pageNum=${pageQueryUtils.nextPageNum}, plate_number=${plate_number}, phone_num=${phone_num})}">下一页&#xe65b;</a>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © zhongjing.info
+        </div>
+    </div>
+</div>
+<div th:replace="common/commonElement :: jsFile"></div>
+<script th:inline="javascript" type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('form', function () {
+        var form = layui.form;
+    });
+
+    // var projectPath = "http://localhost:80"
+    var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+    document.getElementById("selectVipButton").onclick = function () {
+        var plateNumber = document.getElementById("plateNumber").value;
+        var phoneNum = document.getElementById("phoneNum").value;
+        window.location.href = projectPath + "/vip/main?plate_number=" + plateNumber + "&phone_num=" + phoneNum;
+    };
+
+    document.getElementById("addVipButton").onclick = function () {
+        window.location.href = projectPath + "/vip/toAdd";
+    };
+
+    function renewVip(id) {
+        window.location.href = projectPath + "/vip/toRenew?id=" + id;
+    }
+</script>
+</body>
+</html>

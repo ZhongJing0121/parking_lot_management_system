@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.VipMapper">
+
+    <!--  Integer count()  -->
+    <select id="count" resultType="java.lang.Integer">
+        select count(*)
+        from vip;
+    </select>
+
+    <!--  Integer countByPlateNumber(String plateNumber)  -->
+    <select id="countByPlateNumber" resultType="java.lang.Integer">
+        select count(*)
+        from vip
+        where plate_number = #{plateNumber};
+    </select>
+
+    <!--  List<Vip> getByPlatenumberAndPhoneNum(String plateNumber, String phoneNum)  -->
+    <select id="getByPlatenumberAndPhoneNum" resultType="vip">
+        select id,
+               username,
+               phone_num,
+               plate_number,
+               start_time,
+               end_time,
+               charge
+        from vip
+        where plate_number like concat('%', #{plateNumber}, '%')
+          and phone_num like concat('%', #{phoneNum}, '%');
+    </select>
+
+    <!--  Vip getById(Integer id)  -->
+    <select id="getById" resultType="vip">
+        select id,
+               username,
+               phone_num,
+               plate_number,
+               start_time,
+               end_time,
+               charge
+        from vip
+        where id = #{id};
+    </select>
+
+    <!--  boolean add(Vip vip)  -->
+    <insert id="add">
+        insert into vip(username, phone_num, plate_number, start_time, end_time, charge)
+        values (#{username}, #{phoneNum}, #{plateNumber}, #{startTime}, #{endTime}, #{charge});
+    </insert>
+
+    <!--  boolean update(Vip vip)  -->
+    <update id="update">
+        update vip
+        set username     = #{username},
+            phone_num    = #{phoneNum},
+            plate_number = #{plateNumber},
+            start_time   = #{startTime},
+            end_time     = #{endTime},
+            charge       = #{charge}
+        where id = #{id}
+    </update>
+
+    <!--  void deleteById(Integer id)  -->
+    <delete id="deleteById">
+        delete from vip
+        where id = #{id};
+    </delete>
+
+</mapper>

@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.InGarageMapper">
+
+    <!--    List<InGarage> listAll(String plateNumber)  -->
+    <select id="listAll" resultType="inGarage">
+        select id,
+               plate_number,
+               start_time
+        from in_garage
+        where plate_number like concat('%', #{plateNumber}, '%');
+    </select>
+
+    <!--  List<InGarage> getByPlateNumber(String plateNumber)  -->
+    <select id="getByPlateNumber" resultType="inGarage">
+        select id,
+               plate_number,
+               start_time
+        from in_garage
+        where plate_number like concat('%', #{plateNumber}, '%');
+    </select>
+
+    <!--  InGarage getById(Integer id)  -->
+    <select id="getById" resultType="inGarage">
+        select id,
+               plate_number,
+               start_time
+        from in_garage
+        where id = #{id};
+    </select>
+
+    <!--  boolean add(InGarage inGarage)  -->
+    <insert id="add">
+        insert into in_garage(plate_number, start_time)
+        values (#{plateNumber}, #{startTime});
+    </insert>
+
+    <!--  boolean removeById(Integer id)  -->
+    <delete id="removeById">
+        delete
+        from in_garage
+        where id = #{id};
+    </delete>
+
+    <!--  void setStartTimeById(String startTime, Integer id)  -->
+    <update id="setStartTimeById">
+        update in_garage
+        set start_time = #{startTime}
+        where id = #{id};
+    </update>
+
+</mapper>

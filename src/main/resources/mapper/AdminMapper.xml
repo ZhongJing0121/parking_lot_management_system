@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.AdminMapper">
+
+    <!--  boolean add(Admin admin);  -->
+    <insert id="add">
+        insert into admin(username, password, email)
+        values (#{username}, #{password}, #{email});
+    </insert>
+
+    <!--  boolean update(Admin admin);  -->
+    <update id="update">
+        update admin
+        set username      = #{username},
+            password      = #{password},
+            email         = #{email},
+            head_portrait = #{headPortrait}
+        where id = #{id};
+    </update>
+
+    <!--  Admin selectByUsername(String username);  -->
+    <select id="selectByUsername" resultType="admin">
+        select id,
+               username,
+               password,
+               email,
+               head_portrait
+        from admin
+        where username = #{username};
+    </select>
+
+    <!--  Admin selectById(Integer id);  -->
+    <select id="selectById" resultType="admin">
+        select id,
+               username,
+               password,
+               email,
+               head_portrait
+        from admin
+        where id = #{id};
+    </select>
+
+    <!--  Integer selectByUsernameOrEmail(@Param("username") String username, @Param("email") String email);  -->
+    <select id="selectByUsernameOrEmail" resultType="java.lang.Integer">
+        select count(*)
+        from admin
+        where username = #{username}
+           or email = #{email};
+    </select>
+
+    <!--  Integer selectByUsernameAndEmail(@Param("username") String username, @Param("email") String email);  -->
+    <select id="selectByUsernameAndEmail" resultType="java.lang.Integer">
+        select count(*)
+        from admin
+        where username = #{username}
+          and email = #{email};
+    </select>
+
+    <!--  boolean updateHeadPortraitById(Integer id, String filePath)  -->
+    <update id="updateHeadPortraitById">
+        update admin
+        set head_portrait = #{filePath}
+        where id = #{id}
+    </update>
+
+</mapper>

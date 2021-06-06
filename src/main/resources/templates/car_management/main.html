@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>室内停车场管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+    <style type="text/css">
+        .page {
+            width: 50%;
+            margin-left: 450px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/commonElement :: head"></div>
+    <div th:replace="common/commonElement :: left-nav"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+<!--            <form class="layui-form layui-row" th:action="identify_the_license_plate">-->
+            <form class="layui-form layui-row">
+                <div class="layui-form-item layui-col-md8">
+                    <label class="layui-form-label">车牌</label>
+                    <div class="layui-input-block">
+                        <input id="enterInput" type="text" name="title" required lay-verify="required"
+                               placeholder="请输入车牌号"
+                               autocomplete="off" class="layui-input">
+                    </div>
+                </div>
+                <button id="enterButton" type="button" class="layui-btn  layui-col-md2">车辆驶入</button>
+                <button type="button" class="layui-btn" id="identify_license_plate">
+                    <i class="layui-icon">&#xe67c;</i>自动识别车牌
+                </button>
+            </form>
+            车位占用率
+            <hr class="layui-bg-green">
+            <div class="layui-progress layui-progress-big" lay-showPercent="yes">
+                <div class="layui-progress-bar layui-bg-green" th:attr="lay-percent=${seizureRate}"></div>
+            </div>
+            <br>
+            <form class="layui-form layui-row" action="">
+                <div class="layui-form-item layui-col-md10">
+                    <label class="layui-form-label">车牌</label>
+                    <div class="layui-input-block">
+                        <input id="plate_number" type="text" name="title" required lay-verify="required"
+                               placeholder="请输入车牌号"
+                               autocomplete="off" class="layui-input" th:value="${plateNumber}">
+                    </div>
+                </div>
+                <button id="seletCarButton" type="button" class="layui-btn  layui-col-md1">查询</button>
+            </form>
+            <table class="layui-table" lay-size="lg">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>车牌号</th>
+                    <th>进入时间</th>
+                    <th>操作</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="inGarage : ${pageUtils.list}">
+                    <td th:text="${inGarage.id}"></td>
+                    <td th:text="${inGarage.plateNumber}"></td>
+                    <td th:text="${inGarage.startTime}"></td>
+                    <td>
+                        <button type="button" class="layui-btn layui-col-md12"
+                                th:onclick="'javascript:outCar('+${inGarage.id}+')'">
+                            车辆驶出
+                        </button>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="page">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/car/main?(pageNum=${pageUtils.prePageNum},plate_number=${plateNumber})}">&#xe65a;上一页</a>
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        第[[${pageUtils.pageNum}]]页
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/car/main?(pageNum=${pageUtils.nextPageNum},plate_number=${plateNumber})}">下一页&#xe65b;</a>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © zhongjing.info
+        </div>
+    </div>
+</div>
+<div th:replace="common/commonElement :: jsFile"></div>
+<script th:inline="javascript" type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+    });
+
+    layui.use('form', function () {
+        var form = layui.form;
+    });
+
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    // var projectPath = "http://localhost:80"
+    var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+    // 车辆驶入
+    var enterButton = document.getElementById("enterButton");
+    enterButton.onclick = function () {
+        var enterInput = document.getElementById("enterInput");
+        var enterInputValue = enterInput.value;
+
+        // AJAX
+        var xhr = new XMLHttpRequest();
+        var url = projectPath + "/car/enter?plate_number=" + enterInputValue;
+        xhr.open('get', url);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var responseText = xhr.responseText;
+                if (responseText == "true") {
+                    window.location.replace(projectPath + "/car/main");
+                    // window.location.href = projectPath + "/car/main";
+                } else {
+                    layer.open({
+                        title: '车辆驶入失败'
+                        , content: '车位已满或套牌，禁止停车'
+                    });
+                }
+            }
+        };
+    };
+
+    // 查询在库车辆
+    var selectCarButton = document.getElementById("seletCarButton");
+    selectCarButton.onclick = function () {
+        var plateNumber = document.getElementById("plate_number").value;
+
+        window.location.replace(projectPath + "/car/main?plate_number=" + plateNumber);
+    };
+
+    // 车辆驶出
+    function outCar(id) {
+        var xhr = new XMLHttpRequest();
+        var url = projectPath + "/car/getDetailedList?id=" + id;
+        xhr.open('get', url);
+        xhr.send();
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var responseText = xhr.responseText;
+                var allRecord = JSON.parse(responseText);
+                layer.open({
+                    type: 1,
+                    title: ['收费清单', false],
+                    area: '600px',
+                    content: 'id：' + allRecord.id
+                        + '<br/>车牌号：' + allRecord.plateNumber
+                        + '<br/>' + '驶入时间：' + allRecord.startTime
+                        + '<br/>驶出时间：' + allRecord.endTime
+                        + '<br/>应收费用：' + allRecord.charge,
+                    btn: ['已缴费'],
+                    btnAlign: 'c',
+                    yes: function () {
+                        var xhr = new XMLHttpRequest();
+                        var url = projectPath + "/car/out";
+                        xhr.open('delete', url);
+                        xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+                        requestJson = JSON.stringify(allRecord);
+                        xhr.send(requestJson);
+                        xhr.onreadystatechange = function () {
+                            if (xhr.readyState == 4 && xhr.status == 200) {
+                                var responseText = xhr.responseText;
+                                if (responseText == "true") {
+                                    window.location.href = projectPath + "/car/main";
+                                } else {
+                                    alert("发生了未知错误");
+                                }
+                            }
+                        };
+                    }
+                });
+            }
+        };
+    }
+
+    layui.use('upload', function(){
+        var upload = layui.upload;
+
+        //执行实例
+        var uploadInst = upload.render({
+            elem: '#identify_license_plate' //绑定元素
+            ,method: "post" // 提交方式
+            ,url: projectPath + '/car/identify_the_license_plate' //上传接口
+            ,done: function(res){
+                //上传完毕回调
+                console.log(res.words_result.number);
+                var carNumber = res.words_result.number;
+                document.getElementById("enterInput").value = res.words_result.number;
+            }
+            ,error: function(){
+                //请求异常回调
+            }
+        });
+    });
+</script>
+</body>
+
+</html>

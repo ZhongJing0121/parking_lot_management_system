@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>室内停车场管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+    <style type="text/css">
+        .page {
+            width: 50%;
+            margin-left: 450px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/commonElement :: head"></div>
+    <div th:replace="common/commonElement :: left-nav"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <form class="layui-form layui-row" action="">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">车牌号</label>
+                    <div class="layui-input-inline">
+                        <input id="plateNumber" type="text" name="password" required lay-verify="required"
+                               placeholder="请输入车牌号"
+                               autocomplete="off" class="layui-input" th:value="${plate_number}">
+                    </div>
+                    <label class="layui-form-label">起始日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="startTime" autocomplete="off" class="layui-input" lay-verify="required"
+                               id="startTime" th:value="${start_time}">
+                    </div>
+                    <label class="layui-form-label">截止日期</label>
+                    <div class="layui-input-inline">
+                        <input type="text" name="endTime" autocomplete="off" class="layui-input" lay-verify="required"
+                               id="endTime" th:value="${end_time}">
+                    </div>
+                    <button id="select" type="button" class="layui-btn  layui-col-md1">
+                        记录查询
+                    </button>
+            </form>
+            <div class="layui-col-md12">
+                <br>
+                <label>会员列表</label>
+                <hr class="layui-bg-green">
+                <br>
+            </div>
+            <table class="layui-table" lay-size="lg">
+                <thead>
+                <tr>
+                    <th>车牌号</th>
+                    <th>驶入时间</th>
+                    <th>驶出时间</th>
+                    <th>收费</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="allRecord : ${pageQueryUtils.list}">
+                    <td th:text="${allRecord.plateNumber}">#</td>
+                    <td th:text="${allRecord.startTime}">张三</td>
+                    <td th:text="${allRecord.endTime}">晋AV0001</td>
+                    <td th:text="${allRecord.charge}">13938389438</td>
+                </tr>
+                </tbody>
+            </table>
+            <div class="page">
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/statistics/main(pageNum=${pageQueryUtils.prePageNum}, plate_number=${plate_number}, start_time=${start_time}, end_time=${end_time})}">&#xe65a;上一页</a>
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        第[[${pageQueryUtils.pageNum}]]页
+                    </i>
+                </button>
+                <button type="button" class="layui-btn layui-btn-sm layui-btn-primary layui-bg-green">
+                    <i class="layui-icon">
+                        <a style="color: white"
+                           th:href="@{/statistics/main(pageNum=${pageQueryUtils.nextPageNum}, plate_number=${plate_number}, start_time=${start_time}, end_time=${end_time})}">下一页&#xe65b;</a>
+                    </i>
+                </button>
+            </div>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © zhongjing.info
+        </div>
+    </div>
+</div>
+<div th:replace="common/commonElement :: jsFile"></div>
+<script th:inline="javascript" type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('form', function () {
+        var form = layui.form;
+    });
+
+    // var projectPath = "http://localhost:80"
+    var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+    layui.use('laydate', function () {
+        var laydate = layui.laydate;
+
+        laydate.render({
+            elem: '#startTime',
+            trigger: 'click'
+        });
+
+        laydate.render({
+            elem: '#endTime',
+            trigger: 'click'
+        });
+    });
+
+    document.getElementById("select").onclick = function () {
+        let plateNumber = document.getElementById("plateNumber").value;
+        let startTime = document.getElementById("startTime").value;
+        let endTime = document.getElementById("endTime").value;
+        window.location.href = projectPath + "/statistics/main?plate_number=" + plateNumber + "&start_time=" + startTime + "&end_time=" + endTime;
+    };
+</script>
+</body>
+</html>

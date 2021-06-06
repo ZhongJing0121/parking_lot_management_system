@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.StatisticMapper">
+
+    <!--  List<AllRecord> statistic(@Param("plateNumber") String plateNumber, @Param("startTime") String startTime, @Param("endTime") String endTime);  -->
+    <select id="statistic" resultType="allRecord">
+        SELECT id, plate_number, start_time, end_time, charge
+        FROM all_record
+        WHERE start_time &gt;= #{startTime}
+        AND end_time &lt; #{endTime}
+        AND plate_number LIKE concat('%', #{plateNumber}, '%');
+    </select>
+
+</mapper>

@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>室内停车场管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+    <style type="text/css">
+        .page {
+            width: 50%;
+            margin-left: 450px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/commonElement :: head"></div>
+    <div th:replace="common/commonElement :: left-nav"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <form class="layui-form">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">用户名</label>
+                    <div class="layui-input-block">
+                        <input id="username" type="text" name="username" required lay-verify="required"
+                               autocomplete="off" class="layui-input" th:value="${session.admin.username}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">邮箱</label>
+                    <div class="layui-input-block">
+                        <input id="email" type="text" name="email" required lay-verify="required"
+                               autocomplete="off" class="layui-input" th:value="${session.admin.email}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="updateBtn" type="button" class="layui-btn">修改</button>
+                        <button id="exitBtn" type="button" class="layui-btn">退出</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © zhongjing.info
+        </div>
+    </div>
+</div>
+<div th:replace="common/commonElement :: jsFile"></div>
+<script th:inline="javascript" type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    // 获取项目路径
+    var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+    // 给退出按钮绑定单击事件
+    var exitBtn = document.getElementById("exitBtn");
+    exitBtn.onclick = function () {
+        window.location.href = projectPath + "/car/main";
+    }
+
+    // 给修改按钮绑定单击事件
+    var updateBtn = document.getElementById("updateBtn");
+    updateBtn.onclick = function () {
+        // 获取输入框的用户名
+        var username = document.getElementById("username").value;
+        // 获取输入框的邮箱
+        var email = document.getElementById("email").value;
+
+        // AJAX
+        var xhr = new XMLHttpRequest();
+        var url = projectPath + "/admin/updatePersonalInformation";
+        // 创建admin对象
+        var admin = {
+            id: [[${session.admin.id}]],
+            username: username,
+            password: [[${session.admin.password}]],
+            email: email,
+            headPortrait: [[${session.admin.headPortrait}]]
+        };
+        // 设置请求方式和url路径
+        xhr.open("post", url);
+        // 设置字符集
+        xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        // 对象转json
+        var requestJson = JSON.stringify(admin);
+        // 发送
+        xhr.send(requestJson);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var responseText = xhr.responseText;
+                if (responseText == "true") {
+                    layer.open({
+                        title: "成功"
+                        , content: "个人信息已修改成功！"
+                        , time: 2000
+                        , end: function () {
+                            window.location.replace(projectPath + "/car/main");
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title: "失败"
+                        , content: "修改失败！"
+                        , time: 2000
+                    });
+                }
+            }
+        };
+    }
+
+</script>
+</body>
+</html>

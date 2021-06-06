@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.StallMessageMapper">
+
+    <!--  StallMessage get()  -->
+    <select id="get" resultType="stallMessage">
+        select id,
+               totality,
+               occupy,
+               salary,
+               vip_salary
+        from stall_message;
+    </select>
+
+    <!--  boolean updateTotality(Integer totality)  -->
+    <update id="updateTotality">
+        update stall_message
+        set totality = #{num};
+    </update>
+
+    <!--  boolean updateOccupy(Integer occupy  -->
+    <update id="updateOccupy">
+        update stall_message
+        set occupy = #{num};
+    </update>
+
+    <!--  boolean updateSalary(Double salary)  -->
+    <update id="updateSalary">
+        update stall_message
+        set salary = #{salary};
+    </update>
+
+    <!--  boolean updateVipSalary(double vipSalary)  -->
+    <update id="updateVipSalary">
+        update stall_message
+        set vip_salary = #{vipSalary};
+    </update>
+
+    <!--  boolean update(StallMessage stallMessage)  -->
+    <update id="update">
+        update stall_message
+        set totality  = #{totality},
+            salary    = #{salary},
+            vip_salary = #{vipSalary}
+        where id = #{id};
+    </update>
+
+</mapper>

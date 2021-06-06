@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org.//DTD Magger 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="info.zhongjing.plms.mapper.AllRecordMapper">
+
+    <!--  boolean add(AllRecord allRecord)  -->
+    <insert id="add">
+        insert into all_record
+        values (#{id}, #{plateNumber}, #{startTime}, #{endTime}, #{charge});
+    </insert>
+
+    <!--  List<AllRecord> list()  -->
+    <select id="list" resultType="allRecord">
+        select id,
+               plate_number,
+               start_time,
+               end_time,
+               charge
+        from all_record
+        limit 0, 5;
+    </select>
+
+    <!--  List<AllRecord> getByplateNumber(String plateNumber)  -->
+    <select id="getByplateNumber" resultType="allRecord">
+        select id,
+               plate_number,
+               start_time,
+               end_time,
+               charge
+        from all_record
+        where plate_number like concat('%', #{plateNumber}, '%')
+        limit 0, 5;
+    </select>
+
+</mapper>

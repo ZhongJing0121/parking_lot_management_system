@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <title>室内停车场管理系统</title>
+    <link rel="stylesheet" type="text/css" th:href="@{/layui/css/layui.css}">
+    <style type="text/css">
+        .page {
+            width: 50%;
+            margin-left: 450px;
+            margin-top: 30px;
+        }
+    </style>
+</head>
+
+<body class="layui-layout-body">
+<div class="layui-layout layui-layout-admin">
+    <div th:include="common/commonElement :: head"></div>
+    <div th:replace="common/commonElement :: left-nav"></div>
+    <div class="layui-body">
+        <!-- 内容主体区域 -->
+        <div style="padding: 15px;">
+            <form class="layui-form">
+                <input type="hidden" id="sid" name="id" th:value="${stallMessage.id}">
+                <div class="layui-form-item">
+                    <label class="layui-form-label">总车位</label>
+                    <div class="layui-input-block">
+                        <input id="totality" type="text" name="totality" required lay-verify="required"
+                               autocomplete="off" class="layui-input" th:value="${stallMessage.totality}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">临时车价格</label>
+                    <div class="layui-input-block">
+                        <input id="salary" type="text" name="salary" required lay-verify="required"
+                               autocomplete="off" class="layui-input" th:value="${stallMessage.salary}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <label class="layui-form-label">VIP价格</label>
+                    <div class="layui-input-block">
+                        <input id="vipSalary" type="text" name="vipSalary" required lay-verify="required"
+                               autocomplete="off" class="layui-input" th:value="${stallMessage.vipSalary}">
+                    </div>
+                </div>
+                <div class="layui-form-item">
+                    <div class="layui-input-block">
+                        <button id="updateBtn" type="button" class="layui-btn">修改</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+
+        <div class="layui-footer">
+            <!-- 底部固定区域 -->
+            © zhongjing.info
+        </div>
+    </div>
+</div>
+<div th:replace="common/commonElement :: jsFile"></div>
+<script th:inline="javascript" type="text/javascript">
+    //JavaScript代码区域
+    layui.use('element', function () {
+        var element = layui.element;
+
+    });
+
+    layui.use('layer', function () {
+        var layer = layui.layer;
+    });
+
+    // 获取项目路径
+    var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+    // 给修改按钮绑定单击事件
+    var updateBtn = document.getElementById("updateBtn");
+    updateBtn.onclick = function () {
+        let id = document.getElementById("sid").value;
+        let totality = document.getElementById("totality").value;
+        let salary = document.getElementById("salary").value;
+        let vipSalary = document.getElementById("vipSalary").value;
+
+
+        // AJAX
+        var xhr = new XMLHttpRequest();
+        var url = projectPath + "/stallMessage/update";
+        // 创建admin对象
+        var stallMessage = {
+            id: id,
+            totality: totality,
+            salary: salary,
+            vipSalary: vipSalary,
+        };
+        // 设置请求方式和url路径
+        xhr.open("put", url);
+        // 设置字符集
+        xhr.setRequestHeader("Content-type", "application/json;charset=UTF-8");
+        // 对象转json
+        var requestJson = JSON.stringify(stallMessage);
+        // 发送
+        xhr.send(requestJson);
+        xhr.onreadystatechange = function () {
+            if (xhr.readyState == 4 && xhr.status == 200) {
+                var responseText = xhr.responseText;
+                if (responseText == "true") {
+                    layer.open({
+                        title: "成功"
+                        , content: "停车场信息已修改成功！"
+                        , time: 2000
+                        , end: function () {
+                            window.location.replace(projectPath + "/car/main");
+                        }
+                    });
+                } else {
+                    layer.open({
+                        title: "失败"
+                        , content: "修改失败！"
+                        , time: 2000
+                    });
+                }
+            }
+        };
+    }
+
+</script>
+</body>
+</html>

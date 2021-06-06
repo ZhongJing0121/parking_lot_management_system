@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div th:fragment="head">
+
+</div>
+
+<div th:fragment="left-nav">
+
+</div>
+
+<div th:fragment="head">
+    <div class="layui-header">
+        <div class="layui-logo">停车场管理系统</div>
+        <ul class="layui-nav layui-layout-right">
+            <li class="layui-nav-item">
+                <a href="javascript:;">
+                    <img th:src="${session.admin.headPortrait}" class="layui-nav-img"
+                         th:text="${session.admin.username}">
+                </a>
+                <dl class="layui-nav-child">
+                    <dd><a th:href="@{/admin/toPersonalInformation}">基本资料</a></dd>
+                    <dd><a id="update_headPortrait" href="javascript:;">修改头像</a></dd>
+                    <dd><a th:href="@{/admin/toResetPassword}">修改密码</a></dd>
+                </dl>
+            </li>
+            <li class="layui-nav-item"><a th:href="@{/admin/exit}">退出系统</a></li>
+        </ul>
+    </div>
+</div>
+
+<div th:fragment="left-nav">
+    <div class="layui-side layui-bg-black">
+        <div class="layui-side-scroll">
+            <!-- 左侧导航区域（可配合layui已有的垂直导航） -->
+            <ul class="layui-nav layui-nav-tree" lay-filter="test">
+                <li class="layui-nav-item"><a th:href="@{/car/main}">车辆管理</a></li>
+                <li class="layui-nav-item"><a th:href="@{/stallMessage/main}">停车场信息</a></li>
+                <li class="layui-nav-item"><a th:href="@{/vip/main}">会员管理</a></li>
+                <li class="layui-nav-item"><a th:href="@{/statistics/main}">统计</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<div th:fragment="jsFile">
+    <script src="./layui/layui.js" th:src="@{/layui/layui.js}"></script>
+    <script th:inline="javascript" type="text/javascript">
+
+        layui.use('layer', function () {
+            var layer = layui.layer;
+        });
+
+        var projectPath = [[${#httpServletRequest.getContextPath()}]];
+
+        layui.use('upload', function () {
+            var upload = layui.upload;
+
+            //执行实例
+            var uploadInst = upload.render({
+                elem: '#update_headPortrait' //绑定元素
+                , method: "post"
+                , accept: 'images'
+                , url: projectPath + '/admin/update_headPortrait' //上传接口
+                , done: function (res) {
+                    //上传完毕回调
+                    if (res == true) {
+                        layer.open({
+                            title: '头像修改成功'
+                            , content: '头像修改成功了！'
+                            , time: 2000
+                            , end: function () {
+                                window.location.href = projectPath + "/car/main";
+                            }
+                        });
+                    } else {
+                        layer.open({
+                            title: '头像修改失败'
+                            , content: '因为某些原因头像修改失败了，请稍后重试！'
+                            , time: 2000
+                        });
+                    }
+                }
+                , error: function () {
+                    //请求异常回调
+                    layer.open({
+                        title: '头像修改失败'
+                        , content: '因为某些原因头像修改失败了，请稍后重试！'
+                        , time: 2000
+                    });
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
